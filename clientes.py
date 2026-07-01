@@ -35,12 +35,12 @@ def agregar_cliente(conexion):
             continue  # Si el apellido está vacío, vuelve a solicitar los datos
 
         edad = input("Ingrese la edad del cliente: ")
-        email = input("Ingrese el correo electrónico del cliente: ").strip()
-
         edad_int = validar_edad(edad)
         if edad_int is None:
             continue  # Si la edad no es válida, vuelve a solicitar los datos
 
+
+        email = input("Ingrese el correo electrónico del cliente: ").strip()
         email= validar_email(email)
         if email is None:
             continue  # Si el correo no es válido, vuelve a solicitar los datos
@@ -72,12 +72,12 @@ def ver_clientes(conexion):
         print("\n No hay clientes cargados.")
         return
 
-    print("\n" + "-" * 60)
+    print("\n" + "-" * 90)
     print(f"  {'ID':<5} {'NOMBRE':<20} {'APELLIDO':<20} {'EDAD':<10} {'CORREO':<30}")
-    print("-" * 60)
+    print("-" * 90)
     for id_, nombre, apellido, edad, email in clientes:
         print(f"  {id_:<5} {nombre:<20} {apellido:<20} {edad:<10} {email:<30}")
-    print("-" * 60)
+    print("-" * 90)
     print(f"  Total de clientes: {len(clientes)}")
 
 def buscar_clientes(conexion):
@@ -99,7 +99,7 @@ def buscar_clientes(conexion):
 
     clientes = cursor.fetchall()
     if not clientes:
-        print(f" No se encontraron los clientes con este {termino}")
+        print(f" No se encontraron los clientes con este termino {termino}")
         return
 
     print(f"\n  Se encontraron {len(clientes)} resultado(s):")
@@ -131,12 +131,15 @@ def modificar_cliente(conexion):
     print(f"\n Cliente encontrado: {nombre_actual} {apellido_actual}, Edad: {edad_actual}, Email: {email_actual}")
     nombre_nuevo = input(f" Ingresa el nuevo nombre (dejar en blanco para mantener '{nombre_actual}'): ").strip().capitalize() or nombre_actual
     apellido_nuevo = input(f" Ingresa el nuevo apellido (dejar en blanco para mantener '{apellido_actual}'): ").strip().capitalize() or apellido_actual
-    edad_nueva = input(f" Ingresa la nueva edad (dejar en blanco para mantener '{edad_actual}'): ").strip() or edad_actual
+    edad_nueva = input(f" Ingresa la nueva edad (dejar en blanco para mantener '{edad_actual}'): ").strip() 
     email_nuevo = input(f" Ingresa el nuevo correo electrónico (dejar en blanco para mantener '{email_actual}'): ").strip() or email_actual
 
-    edad_nueva = validar_edad(edad_nueva)
-    if edad_nueva is None:
-       return  # Si la edad no es válida, vuelve a solicitar los datos
+    if edad_nueva == "":
+        edad_nueva = int(edad_actual)
+    else:
+        edad_nueva = validar_edad(edad_nueva)
+        if edad_nueva is None:
+            return # Si la edad no es válida, vuelve a solicitar los datos
     email_nuevo = validar_email(email_nuevo)
     if email_nuevo is None:
         return  # Si el correo no es válido, vuelve a solicitar los datos
