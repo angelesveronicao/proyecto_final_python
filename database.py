@@ -1,4 +1,6 @@
 import sqlite3 as sql
+from colorama import Fore, init
+init(autoreset=True)
 
 def conectar_db():
     """
@@ -20,4 +22,4 @@ def conectar_db():
         return conexion
     
     except sql.Error as e:
-        print(f"Error al conectar a la base de datos: {e}")  
+        print(Fore.RED + f"Error al conectar a la base de datos: {e}")  

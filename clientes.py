@@ -1,10 +1,13 @@
 
 import sqlite3 as sql
+from colorama import Fore, init
+
+init(autoreset=True)
 
 def validar_edad(edad):
     """ Validar edad """
     if not edad.isdigit() or not (5 <= int(edad) <= 120):
-        print("Edad inválida. Debe ser un número entre 5 y 120.")
+        print(Fore.YELLOW + "Edad inválida. Debe ser un número entre 5 y 120.")
         return None
     return int(edad)
 
@@ -12,7 +15,7 @@ def validar_edad(edad):
 def validar_email(email):
     """ Validar email """
     if "@" not in email or "." not in email:
-        print("Correo electrónico inválido. Debe contener '@' y '.'")
+        print(Fore.YELLOW + "Correo electrónico inválido. Debe contener '@' y '.'")
         return None
     return email
 
@@ -26,12 +29,12 @@ def agregar_cliente(conexion):
     while True:
         nombre = input("Ingrese el nombre del cliente: ").strip().capitalize()
         if not nombre:
-            print("El nombre no puede estar vacío.")
+            print(Fore.YELLOW + "El nombre no puede estar vacío.")
             continue  # Si el nombre está vacío, vuelve a solicitar los datos
 
         apellido = input("Ingrese el apellido del cliente: ").strip().capitalize()
         if not apellido:
-            print("El apellido no puede estar vacío.")
+            print(Fore.YELLOW + "El apellido no puede estar vacío.")
             continue  # Si el apellido está vacío, vuelve a solicitar los datos
 
         edad = input("Ingrese la edad del cliente: ")
@@ -53,12 +56,12 @@ def agregar_cliente(conexion):
             ''', (nombre, apellido, edad_int, email))
 
             conexion.commit()
-            print("Cliente agregado exitosamente.")
+            print(Fore.GREEN + "Cliente agregado exitosamente.")
             break
             
         except sql.Error as e:
             conexion.rollback()
-            print(f"Error: {e}, no se pudo agregar el cliente. Intente nuevamente.")
+            print(Fore.RED + f"Error: {e}, no se pudo agregar el cliente. Intente nuevamente.")
 
 def ver_clientes(conexion):
     """
@@ -69,7 +72,7 @@ def ver_clientes(conexion):
     clientes = cursor.fetchall()
     
     if not clientes:
-        print("\n No hay clientes cargados.")
+        print(Fore.YELLOW + "\n No hay clientes cargados.")
         return
 
     print("\n" + "-" * 90)
@@ -88,7 +91,7 @@ def buscar_clientes(conexion):
     termino = input("Ingrese el término de búsqueda (nombre, apellido o correo electrónico): ").strip()
 
     if not termino:
-        print(" ❌ El termino de busqueda no puede estar vacio")
+        print(Fore.RED + " ❌ El termino de busqueda no puede estar vacio")
         return
     
     cursor = conexion.cursor()
@@ -99,7 +102,7 @@ def buscar_clientes(conexion):
 
     clientes = cursor.fetchall()
     if not clientes:
-        print(f" No se encontraron los clientes con este termino {termino}")
+        print(Fore.RED + f" No se encontraron los clientes con este termino '{termino}'")
         return
 
     print(f"\n  Se encontraron {len(clientes)} resultado(s):")
@@ -115,7 +118,7 @@ def modificar_cliente(conexion):
     try:
         id_modificar = int(input("\n Ingresa el ID del cliente a modificar: ").strip())
     except ValueError:
-        print(" ❌ El ID debe ser un numero entero")
+        print(Fore.RED + " ❌ El ID debe ser un numero entero")
         return
 
     cursor = conexion.cursor()
@@ -123,7 +126,7 @@ def modificar_cliente(conexion):
     cliente = cursor.fetchone()
 
     if not cliente:
-        print(f" ❌ No existe ningun cliente con el id {id_modificar}")
+        print(Fore.RED + f" ❌ No existe ningun cliente con el id {id_modificar}")
         return
     
     nombre_actual, apellido_actual, edad_actual, email_actual = cliente[1], cliente[2], cliente[3], cliente[4] 
@@ -152,11 +155,11 @@ def modificar_cliente(conexion):
         ''', (nombre_nuevo, apellido_nuevo, edad_nueva, email_nuevo, id_modificar))
 
         conexion.commit()
-        print(f"✅ Cliente con ID {id_modificar} modificado correctamente.")
+        print(Fore.GREEN + f"✅ Cliente con ID {id_modificar} modificado correctamente.")
     except sql.Error as e:
         conexion.rollback()
-        print(f" ❌ Error al modificar el cliente: {e}")
-    
+        print(Fore.RED + f" ❌ Error al modificar el cliente: {e}")
+
 
 
 def eliminar_cliente(conexion):
@@ -169,7 +172,7 @@ def eliminar_cliente(conexion):
     try:
         id_eliminar = int(input("\n Ingresa el ID del cliente a eliminar: ").strip()) 
     except ValueError:
-        print(" ❌ El ID debe ser un numero entero")
+        print(Fore.RED + " ❌ El ID debe ser un numero entero")
         return
 
     cursor = conexion.cursor()
@@ -177,20 +180,20 @@ def eliminar_cliente(conexion):
     fila = cursor.fetchone()
 
     if not fila:
-        print(f" ❌ No existe ningun cliente con el id {id_eliminar}")
+        print(Fore.RED + f" ❌ No existe ningun cliente con el id {id_eliminar}")
         return
 
     nombre = fila[0]
     print(f"\n Cliente encontrado: {nombre}")
     respuesta = input(f" ¿ Confirmas que queres eliminar '{nombre}' (s/n): ").strip().lower()
     if respuesta != 's':
-        print("Operacion cancelada.")
+        print(Fore.YELLOW + f"Operacion cancelada.")
         return
 
     try:
         cursor.execute("DELETE FROM clientes WHERE id = ?",(id_eliminar,))
         conexion.commit()
-        print(f"✅ Cliente '{nombre}' eliminado correctamente.")
+        print(Fore.GREEN + f"✅ Cliente '{nombre}' eliminado correctamente.")
     except sql.Error as e:
         conexion.rollback()
-        print(f"\n Error al eliminar: {e}")
+        print(Fore.RED + f"\n Error al eliminar: {e}")

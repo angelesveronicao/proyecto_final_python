@@ -1,13 +1,15 @@
 import clientes as c
 import utils as u
 import database as db   
+from colorama import Fore, init
+init(autoreset=True)
 
 def main():
     """ Función principal del programa """
     conexion = db.conectar_db()
 
     if conexion is None:
-        print(" Error al conectar con la base de datos.")
+        print(Fore.RED + " Error al conectar con la base de datos.")
         return
 
     while True:
@@ -44,7 +46,7 @@ def main():
             print("\n Hasta luego")
             break
         else:
-            print(" Opcion invalida. Igresa un numero del 1 al 6")
+            print(Fore.RED + " Opcion invalida. Igresa un numero del 1 al 6")
             u.pausar()
 
 
